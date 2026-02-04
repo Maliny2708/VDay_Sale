@@ -53,7 +53,7 @@ body {
   text-align: center;
   padding: 20px;
   /* Ensure your file is named exactly Hero.jpg */
-  background-image: url('assets/images/hero.jpg'); 
+  background-image: url('assets/images/hero.jpeg'); 
   background-size: cover;
   background-position: center;
 }
@@ -146,3 +146,4 @@ input, textarea {
   .nav { padding: 15px 20px; }
 
 }
+
