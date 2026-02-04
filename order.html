@@ -15,7 +15,7 @@
 
   <div style="padding-top:100px; text-align:center;">
       <h2>Valentine's Bundles 🎁</h2>
-      <p>Best Value!</p>
+      <p>Customize your cake & bling!</p>
   </div>
 
   <div class="grid" style="margin-top:20px;">
@@ -25,7 +25,7 @@
       <h3>Combo 1</h3>
       <p>Box of 2 Cakes + 1 Accessory</p>
       <p><strong>RM30</strong></p>
-      <button onclick="addCombo('Combo 1', 30)">Add to Cart</button>
+      <button onclick="openSmartModal('Combo 1', 30, 2, 1)">Add to Cart</button>
     </div>
 
     <div class="product-card">
@@ -33,7 +33,7 @@
       <h3>Duo Combo</h3>
       <p>Box of 2 Cakes + 2 Accessories</p>
       <p><strong>RM35</strong></p>
-      <button onclick="addCombo('Duo Combo', 35)">Add to Cart</button>
+      <button onclick="openSmartModal('Duo Combo', 35, 2, 2)">Add to Cart</button>
     </div>
 
     <div class="product-card">
@@ -41,7 +41,7 @@
       <h3>Combo 2</h3>
       <p>Box of 4 Cakes + 2 Accessories</p>
       <p><strong>RM50</strong></p>
-      <button onclick="addCombo('Combo 2', 50)">Add to Cart</button>
+      <button onclick="openSmartModal('Combo 2', 50, 4, 2)">Add to Cart</button>
     </div>
   </div>
 
@@ -56,7 +56,7 @@
       <h3>Box of 2 Cakes</h3>
       <p>Mix & Match Flavors</p>
       <p><strong>RM20</strong></p>
-      <button onclick="addCombo('Box of 2 Cakes', 20)">Add to Cart</button>
+      <button onclick="openSmartModal('Box of 2 Cakes', 20, 2, 0)">Add to Cart</button>
     </div>
 
     <div class="product-card">
@@ -64,7 +64,7 @@
       <h3>Box of 4 Cakes</h3>
       <p>Mix & Match Flavors</p>
       <p><strong>RM36</strong></p>
-      <button onclick="addCombo('Box of 4 Cakes', 36)">Add to Cart</button>
+      <button onclick="openSmartModal('Box of 4 Cakes', 36, 4, 0)">Add to Cart</button>
     </div>
 
     <div class="product-card">
@@ -72,7 +72,7 @@
       <h3>Earrings</h3>
       <p>Random Design</p>
       <p><strong>RM10</strong></p>
-      <button onclick="addCombo('Earrings', 10)">Add to Cart</button>
+      <button onclick="addAccessory('Earrings', 10)">Add to Cart</button>
     </div>
 
     <div class="product-card">
@@ -80,7 +80,7 @@
       <h3>Bracelet</h3>
       <p>Beaded / Chain</p>
       <p><strong>RM10</strong></p>
-      <button onclick="addCombo('Bracelet', 10)">Add to Cart</button>
+      <button onclick="addAccessory('Bracelet', 10)">Add to Cart</button>
     </div>
 
     <div class="product-card">
@@ -88,7 +88,71 @@
       <h3>Bag Charm</h3>
       <p>Cute addition!</p>
       <p><strong>RM12</strong></p>
-      <button onclick="addCombo('Bag Charm', 12)">Add to Cart</button>
+      <button onclick="addAccessory('Bag Charm', 12)">Add to Cart</button>
+    </div>
+  </div>
+
+  <div id="flavorModal" class="modal-overlay">
+    <div class="modal-box" style="max-height:80vh; overflow-y:auto;">
+      <h3 id="modalTitle">Customize</h3>
+      
+      <div id="cakeSection">
+        <h4 style="border-bottom:1px solid #eee; padding-bottom:5px; margin-top:20px;">Pick Cakes</h4>
+        <p id="cakeMsg" style="font-size:0.85rem; margin-bottom:10px;">...</p>
+        
+        <div class="flavor-control">
+          <span>🍏 Apple Crumble</span>
+          <div>
+            <button class="qty-btn" onclick="changeQty('apple', -1)">-</button>
+            <span id="qtyApple" class="qty-display">0</span>
+            <button class="qty-btn" onclick="changeQty('apple', 1)">+</button>
+          </div>
+        </div>
+        <div class="flavor-control">
+          <span>🧀 Cheesecake</span>
+          <div>
+            <button class="qty-btn" onclick="changeQty('cheese', -1)">-</button>
+            <span id="qtyCheese" class="qty-display">0</span>
+            <button class="qty-btn" onclick="changeQty('cheese', 1)">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="accSection">
+        <h4 style="border-bottom:1px solid #eee; padding-bottom:5px; margin-top:20px;">Pick Accessories</h4>
+        <p id="accMsg" style="font-size:0.85rem; margin-bottom:10px;">...</p>
+
+        <div class="flavor-control">
+          <span>👂 Earrings</span>
+          <div>
+            <button class="qty-btn" onclick="changeQty('earring', -1)">-</button>
+            <span id="qtyEarring" class="qty-display">0</span>
+            <button class="qty-btn" onclick="changeQty('earring', 1)">+</button>
+          </div>
+        </div>
+        <div class="flavor-control">
+          <span>💍 Bracelet</span>
+          <div>
+            <button class="qty-btn" onclick="changeQty('bracelet', -1)">-</button>
+            <span id="qtyBracelet" class="qty-display">0</span>
+            <button class="qty-btn" onclick="changeQty('bracelet', 1)">+</button>
+          </div>
+        </div>
+        <div class="flavor-control">
+          <span>🎀 Bag Charm</span>
+          <div>
+            <button class="qty-btn" onclick="changeQty('charm', -1)">-</button>
+            <span id="qtyCharm" class="qty-display">0</span>
+            <button class="qty-btn" onclick="changeQty('charm', 1)">+</button>
+          </div>
+        </div>
+      </div>
+
+      <br>
+      <button id="confirmBtn" class="btn" style="width:100%" onclick="confirmSelection()" disabled>
+        Incomplete Selection
+      </button>
+      <button onclick="closeModal()" style="margin-top:10px; background:none; color:#999; border:none; cursor:pointer;">Cancel</button>
     </div>
   </div>
 
