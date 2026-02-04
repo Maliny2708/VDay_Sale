@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Checkout</title>
+  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+
+  <div class="nav">
+    <a href="cart.html">← Back</a>
+    <span>Checkout</span>
+    <span></span>
+  </div>
+
+  <div class="form-container">
+    <h2>Finalize Details 💕</h2>
+    
+    <form name="valentines_order" method="POST" data-netlify="true" action="thankyou.html">
+      
+      <input type="hidden" name="form-name" value="valentines_order">
+      <input type="hidden" name="Order_ID" id="orderID">
+      <input type="hidden" name="Items" id="orderData">
+      <input type="hidden" name="Final_Total" id="finalPrice">
+      <input type="hidden" name="MMU_Student" id="mmuStatus">
+
+      <label>Your Name</label>
+      <input type="text" name="customer_name" required placeholder="e.g. Maliny">
+
+      <label>Phone Number (WhatsApp)</label>
+      <input type="tel" name="phone" required placeholder="012-3456789">
+
+      <label>Delivery Address / Pickup Note</label>
+      <textarea name="address" required placeholder="Full address..."></textarea>
+
+      <div style="background:#fff0f5; padding:15px; border-radius:10px; margin:15px 0;">
+        <label style="display:flex; align-items:center; cursor:pointer;">
+          <input type="checkbox" id="mmuCheck" style="width:auto; margin-right:10px;">
+          <strong>I am an MMU Student (10% Off)</strong>
+        </label>
+      </div>
+
+      <div id="priceBox"></div>
+
+      <button type="submit" class="btn" style="width:100%;">Submit Order</button>
+    </form>
+  </div>
+
+<script src="script.js"></script>
+<script>prepareCheckout();</script>
+</body>
+</html>

@@ -1,0 +1,147 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+:root {
+  --pink: #ff6f91;
+  --light-pink: #ffe3ec;
+  --glass-bg: rgba(255, 255, 255, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.4);
+  --blur: blur(12px);
+  --shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #ffe3ec, #fff0f5);
+  color: #4a4a4a;
+  min-height: 100vh;
+}
+
+/* NAVIGATION */
+.nav {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  padding: 15px 5%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur);
+  border-bottom: 1px solid var(--glass-border);
+  z-index: 100;
+  box-shadow: var(--shadow);
+}
+
+.nav a {
+  margin-left: 20px;
+  text-decoration: none;
+  color: #333;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* HERO SECTION */
+.hero {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
+  /* Ensure your file is named exactly Hero.jpg */
+  background-image: url('assets/images/Hero.jpg'); 
+  background-size: cover;
+  background-position: center;
+}
+
+.hero-content {
+  background: rgba(255, 255, 255, 0.85);
+  padding: 40px;
+  border-radius: 20px;
+  backdrop-filter: blur(5px);
+  box-shadow: var(--shadow);
+}
+
+h1 { color: var(--pink); font-size: 2.5rem; margin-bottom: 10px; }
+h2 { color: var(--pink); margin-top: 80px; text-align: center;}
+
+/* BUTTONS */
+button, .btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 25px;
+  background: var(--pink);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 1rem;
+}
+
+button:hover, .btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(255, 111, 145, 0.4);
+}
+
+/* PRODUCT GRID */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+  padding: 20px 5%;
+  margin-top: 80px; /* Space for fixed nav */
+  padding-bottom: 50px;
+}
+
+.product-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  padding: 20px;
+  border-radius: 20px;
+  text-align: center;
+  transition: transform 0.3s ease;
+  box-shadow: var(--shadow);
+}
+
+.product-card:hover { transform: translateY(-5px); }
+.product-card img { width: 100%; border-radius: 15px; margin-bottom: 15px; }
+
+/* FORMS & CART CONTAINERS */
+.form-container {
+  max-width: 500px;
+  margin: 120px auto 50px;
+  padding: 30px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+}
+
+input, textarea {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-family: inherit;
+}
+
+.cart-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0;
+  border-bottom: 1px solid #eee;
+}
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+  h1 { font-size: 2rem; }
+  .grid { grid-template-columns: 1fr; }
+  .nav { padding: 15px 20px; }
+}

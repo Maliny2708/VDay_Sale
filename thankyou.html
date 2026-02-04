@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Order Confirmed</title>
+  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+
+  <div class="hero" style="background:none; height:auto; padding-top:100px;">
+    <div class="hero-content">
+      <h1>Thank You! 💖</h1>
+      <p>Your order has been submitted.</p>
+      
+      <div style="background:#f9f9f9; padding:20px; border-radius:10px; margin:20px 0;">
+        <p><strong>Order ID:</strong> <span id="dispOrderID">...</span></p>
+        <p><strong>Total to Pay:</strong> <span id="dispTotal">...</span></p>
+      </div>
+
+      <p>Please click below to send payment proof via WhatsApp to confirm your order.</p>
+      
+      <a id="waLink" href="#" class="btn" style="background:#25D366; color:white;">
+        Send WhatsApp Confirmation 📱
+      </a>
+    </div>
+  </div>
+
+<script src="script.js"></script>
+<script>showThankYou();</script>
+</body>
+</html>

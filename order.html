@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Order Here</title>
+  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+
+  <div class="nav">
+    <a href="index.html">Home</a>
+    <span>Order Form</span>
+    <a href="cart.html">🛒 <span id="cartCount">0</span></a>
+  </div>
+
+  <div style="padding-top:100px; text-align:center;">
+      <h2>Valentine's Bundles 🎁</h2>
+      <p>Best Value!</p>
+  </div>
+
+  <div class="grid" style="margin-top:20px;">
+    
+    <div class="product-card">
+      <img src="assets/images/combo1.jpg">
+      <h3>Combo 1</h3>
+      <p>Box of 2 Cakes + 1 Accessory</p>
+      <p><strong>RM30</strong></p>
+      <button onclick="addCombo('Combo 1', 30)">Add to Cart</button>
+    </div>
+
+    <div class="product-card">
+      <img src="assets/images/duo.jpg">
+      <h3>Duo Combo</h3>
+      <p>Box of 2 Cakes + 2 Accessories</p>
+      <p><strong>RM35</strong></p>
+      <button onclick="addCombo('Duo Combo', 35)">Add to Cart</button>
+    </div>
+
+    <div class="product-card">
+      <img src="assets/images/combo2.jpg">
+      <h3>Combo 2</h3>
+      <p>Box of 4 Cakes + 2 Accessories</p>
+      <p><strong>RM50</strong></p>
+      <button onclick="addCombo('Combo 2', 50)">Add to Cart</button>
+    </div>
+  </div>
+
+  <div style="text-align:center; margin-top:50px; border-top:1px solid #eee; padding-top:40px;">
+    <h2>Ala Carte 🍰</h2>
+    <p>Just the treats or just the bling.</p>
+  </div>
+
+  <div class="grid">
+    <div class="product-card">
+      <img src="assets/images/cake1.jpg">
+      <h3>Box of 2 Cakes</h3>
+      <p>Mix & Match Flavors</p>
+      <p><strong>RM20</strong></p>
+      <button onclick="addCombo('Box of 2 Cakes', 20)">Add to Cart</button>
+    </div>
+
+    <div class="product-card">
+      <img src="assets/images/cake2.jpg">
+      <h3>Box of 4 Cakes</h3>
+      <p>Mix & Match Flavors</p>
+      <p><strong>RM36</strong></p>
+      <button onclick="addCombo('Box of 4 Cakes', 36)">Add to Cart</button>
+    </div>
+
+    <div class="product-card">
+      <img src="assets/images/accessory1.jpg">
+      <h3>Earrings</h3>
+      <p>Random Design</p>
+      <p><strong>RM10</strong></p>
+      <button onclick="addCombo('Earrings', 10)">Add to Cart</button>
+    </div>
+
+    <div class="product-card">
+      <img src="assets/images/accessory2.jpg">
+      <h3>Bracelet</h3>
+      <p>Beaded / Chain</p>
+      <p><strong>RM10</strong></p>
+      <button onclick="addCombo('Bracelet', 10)">Add to Cart</button>
+    </div>
+
+    <div class="product-card">
+      <img src="assets/images/accessory3.jpg">
+      <h3>Bag Charm</h3>
+      <p>Cute addition!</p>
+      <p><strong>RM12</strong></p>
+      <button onclick="addCombo('Bag Charm', 12)">Add to Cart</button>
+    </div>
+  </div>
+
+<script src="script.js"></script>
+</body>
+</html>

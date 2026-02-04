@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Your Cart</title>
+  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+
+  <div class="nav">
+    <a href="order.html">← Add More</a>
+    <span>Your Cart</span>
+    <span></span>
+  </div>
+
+  <div class="form-container">
+    <h2>Order Summary</h2>
+    <div id="cartItems"></div>
+    <hr>
+    <div style="display:flex; justify-content:space-between; font-weight:bold; margin: 20px 0;">
+      <span>Subtotal:</span>
+      <span id="subtotal">RM0</span>
+    </div>
+    
+    <a href="checkout.html" class="btn" style="width:100%; text-align:center;">Proceed to Checkout</a>
+  </div>
+
+<script src="script.js"></script>
+<script>loadCart();</script>
+</body>
+</html>
