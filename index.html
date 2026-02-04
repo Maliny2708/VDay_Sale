@@ -2,123 +2,23 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>VDay - Sale</title>
+  <title>Sugar & Shine – Valentine’s Day</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="hero">
 
-<h1>🍰 Sugar & Shine – Valentine’s Orders</h1>
+  <h1>Sugar & Shine 💕</h1>
+  <p class="subtitle">Valentine’s Day Specials</p>
 
-<form name="valentines-order" method="POST" data-netlify="true" action="summary.html">
-<input type="hidden" name="form-name" value="valentines-order">
+  <p class="description">
+    Baked goods × Accessories<br>
+    Perfect for couples, besties & loved ones
+  </p>
 
-<!-- CUSTOMER DETAILS -->
-<h2>Your Details</h2>
-<input required name="name" placeholder="Full Name">
-<input required name="phone" placeholder="Phone Number">
-
-<!-- ORDER TYPE -->
-<h2>Select Bundle</h2>
-<select id="bundle" name="bundle" required onchange="updateForm()">
-  <option value="">Choose one</option>
-  <option value="combo1">Combo 1 – BO2 + 1 accessory (RM30)</option>
-  <option value="combo2">Combo 2 – BO4 + 2 accessories (RM50)</option>
-  <option value="duo">Duo Combo – BO2 + 2 accessories (RM35)</option>
-  <option value="bo2">Regular BO2 (RM20)</option>
-  <option value="bo4">Regular BO4 (RM36)</option>
-</select>
-
-<!-- CAKES -->
-<div id="cakes"></div>
-
-<!-- ACCESSORIES -->
-<div id="accessories"></div>
-<p class="note">Designs subject to availability</p>
-
-<!-- CARD -->
-<h2>Card Message (Optional)</h2>
-<textarea name="card" maxlength="180" placeholder="Max 180 characters"></textarea>
-<p class="note">Card message will be written as-is</p>
-
-<!-- DISCOUNT -->
-<label>
-  <input type="checkbox" id="mmu"> MMU Student (10% off)
-</label>
-
-<!-- DELIVERY -->
-<h2>Delivery</h2>
-<select id="delivery">
-  <option value="0">Pickup (RM0)</option>
-  <option value="8">Delivery (RM8)</option>
-</select>
-
-<!-- CONFIRM -->
-<label>
-  <input required type="checkbox"> I have checked my order details
-</label>
-
-<button type="submit" onclick="calculateTotal()">Submit Order</button>
-
-<input type="hidden" name="total" id="totalInput">
-
-</form>
-
-<script>
-function updateForm() {
-  const bundle = document.getElementById("bundle").value;
-  const cakes = document.getElementById("cakes");
-  const accessories = document.getElementById("accessories");
-
-  cakes.innerHTML = "";
-  accessories.innerHTML = "";
-
-  let cakeCount = bundle.includes("bo4") || bundle === "combo2" ? 4 : 2;
-  let accessoryCount = bundle === "combo1" ? 1 : bundle === "combo2" || bundle === "duo" ? 2 : 0;
-
-  cakes.innerHTML = "<h2>Select Cakes</h2>";
-  for (let i = 1; i <= cakeCount; i++) {
-    cakes.innerHTML += `
-      <select name="cake${i}">
-        <option>Apple Crumble</option>
-        <option>Burnt Cheesecake</option>
-      </select>
-    `;
-  }
-
-  if (accessoryCount > 0) {
-    accessories.innerHTML = "<h2>Accessories</h2>";
-    for (let i = 1; i <= accessoryCount; i++) {
-      accessories.innerHTML += `
-        <select name="accessory${i}">
-          <option>Earring</option>
-          <option>Bracelet</option>
-          <option>Bag Charm</option>
-        </select>
-      `;
-    }
-  }
-}
-
-function calculateTotal() {
-  const bundlePrices = {
-    combo1: 30,
-    combo2: 50,
-    duo: 35,
-    bo2: 20,
-    bo4: 36
-  };
-
-  let total = bundlePrices[bundle.value] || 0;
-  total += parseInt(document.getElementById("delivery").value);
-
-  if (document.getElementById("mmu").checked) {
-    total *= 0.9;
-  }
-
-  document.getElementById("totalInput").value = total.toFixed(2);
-}
-</script>
+  <div class="buttons">
+    <a href="menu.html" class="btn-outline">View Menu</a>
+    <a href="order.html" class="btn-primary">Order Now</a>
+  </div>
 
 </body>
 </html>
-
