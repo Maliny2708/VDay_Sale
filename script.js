@@ -1,26 +1,153 @@
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
+// --- GLOBAL VARIABLES ---
+let currentProduct = {};
+let counts = {
+  apple: 0,
+  cheese: 0,
+  earring: 0,
+  bracelet: 0,
+  charm: 0
+};
+
 // 1. UPDATE NAV CART COUNT
 function updateCartCount() {
   const el = document.getElementById("cartCount");
   if (el) el.innerText = cart.length;
 }
 
-// 2. ADD TO CART (Used in Order Page)
-function addCombo(name, price) {
-  const item = {
-    id: Date.now(), // Unique ID for removal
-    bundle: name,
-    price: price
-  };
-  
-  cart.push(item);
-  localStorage.setItem("cart", JSON.stringify(cart));
-  updateCartCount();
-  alert(name + " added to cart! 💖");
+// 2. DIRECT ADD (For Ala Carte Accessories)
+function addAccessory(name, price) {
+  addToCartFinal(name, price, "No customization");
 }
 
-// 3. LOAD CART (Used in Cart Page)
+// 3. OPEN SMART MODAL
+// arguments: Name, Price, How many Cakes?, How many Accessories?
+function openSmartModal(name, price, cakeLimit, accLimit) {
+  // Reset state
+  currentProduct = { name, price, cakeLimit, accLimit };
+  counts = { apple: 0, cheese: 0, earring: 0, bracelet: 0, charm: 0 };
+
+  // Show/Hide Sections based on limits
+  document.getElementById("cakeSection").style.display = cakeLimit > 0 ? "block" : "none";
+  document.getElementById("accSection").style.display = accLimit > 0 ? "block" : "none";
+
+  // Update Text
+  document.getElementById("modalTitle").innerText = `Customize: ${name}`;
+  
+  // Show Modal
+  document.getElementById("flavorModal").style.display = "flex";
+  updateModalUI();
+}
+
+// 4. CHANGE QUANTITY
+function changeQty(type, change) {
+  // Determine if this is a CAKE or an ACCESSORY
+  const isCake = (type === 'apple' || type === 'cheese');
+  const limit = isCake ? currentProduct.cakeLimit : currentProduct.accLimit;
+  
+  // Calculate current totals
+  const currentTotal = isCake 
+    ? (counts.apple + counts.cheese)
+    : (counts.earring + counts.bracelet + counts.charm);
+
+  // Logic: Allow add if under limit, allow subtract if above 0
+  if (change > 0 && currentTotal < limit) {
+    counts[type]++;
+  } else if (change < 0 && counts[type] > 0) {
+    counts[type]--;
+  }
+
+  updateModalUI();
+}
+
+// 5. UPDATE UI & VALIDATE
+function updateModalUI() {
+  // Update numbers
+  document.getElementById("qtyApple").innerText = counts.apple;
+  document.getElementById("qtyCheese").innerText = counts.cheese;
+  document.getElementById("qtyEarring").innerText = counts.earring;
+  document.getElementById("qtyBracelet").innerText = counts.bracelet;
+  document.getElementById("qtyCharm").innerText = counts.charm;
+
+  // Calculate Totals
+  const totalCakes = counts.apple + counts.cheese;
+  const totalAcc = counts.earring + counts.bracelet + counts.charm;
+  
+  // Messages
+  const cakeMsg = document.getElementById("cakeMsg");
+  const accMsg = document.getElementById("accMsg");
+  const btn = document.getElementById("confirmBtn");
+
+  // Status Logic
+  let cakesOk = true;
+  let accOk = true;
+
+  if (currentProduct.cakeLimit > 0) {
+    if (totalCakes === currentProduct.cakeLimit) {
+      cakeMsg.innerText = "Cakes Selected ✅";
+      cakeMsg.style.color = "green";
+    } else {
+      cakeMsg.innerText = `Pick ${currentProduct.cakeLimit - totalCakes} more cakes`;
+      cakeMsg.style.color = "var(--pink)";
+      cakesOk = false;
+    }
+  }
+
+  if (currentProduct.accLimit > 0) {
+    if (totalAcc === currentProduct.accLimit) {
+      accMsg.innerText = "Accessories Selected ✅";
+      accMsg.style.color = "green";
+    } else {
+      accMsg.innerText = `Pick ${currentProduct.accLimit - totalAcc} more accessories`;
+      accMsg.style.color = "var(--pink)";
+      accOk = false;
+    }
+  }
+
+  // Enable Button if both are OK
+  if (cakesOk && accOk) {
+    btn.disabled = false;
+    btn.style.background = "var(--pink)";
+    btn.innerText = "Add to Cart 💖";
+  } else {
+    btn.disabled = true;
+    btn.style.background = "#ccc";
+    btn.innerText = "Incomplete Selection";
+  }
+}
+
+// 6. CONFIRM SELECTION
+function confirmSelection() {
+  let details = [];
+  
+  if (counts.apple > 0) details.push(`${counts.apple} Apple`);
+  if (counts.cheese > 0) details.push(`${counts.cheese} Cheese`);
+  if (counts.earring > 0) details.push(`${counts.earring} Earring`);
+  if (counts.bracelet > 0) details.push(`${counts.bracelet} Bracelet`);
+  if (counts.charm > 0) details.push(`${counts.charm} Charm`);
+
+  addToCartFinal(currentProduct.name, currentProduct.price, details.join(", "));
+  closeModal();
+}
+
+function closeModal() {
+  document.getElementById("flavorModal").style.display = "none";
+}
+
+// 7. INTERNAL ADD TO CART
+function addToCartFinal(name, price, details) {
+  cart.push({
+    id: Date.now(),
+    bundle: name,
+    price: price,
+    details: details
+  });
+  localStorage.setItem("cart", JSON.stringify(cart));
+  updateCartCount();
+}
+
+// 8. LOAD CART
 function loadCart() {
   const container = document.getElementById("cartItems");
   const subtotalEl = document.getElementById("subtotal");
@@ -36,9 +163,12 @@ function loadCart() {
       total += item.price;
       container.innerHTML += `
         <div class="cart-item">
-          <span>${item.bundle}</span>
+          <div>
+            <strong>${item.bundle}</strong>
+            <div style="font-size:0.85rem; color:#666;">${item.details}</div>
+          </div>
           <span>RM${item.price} 
-            <button onclick="removeItem(${index})" style="padding:5px 10px; font-size:12px; margin-left:10px; background:#ddd; color:#333; border-radius:50%;">x</button>
+            <button onclick="removeItem(${index})" style="padding:2px 8px; margin-left:10px; border-radius:50%; border:none; background:#eee; cursor:pointer;">x</button>
           </span>
         </div>
       `;
@@ -48,7 +178,6 @@ function loadCart() {
   if (subtotalEl) subtotalEl.innerText = "RM" + total;
 }
 
-// 4. REMOVE ITEM
 function removeItem(index) {
   cart.splice(index, 1);
   localStorage.setItem("cart", JSON.stringify(cart));
@@ -56,7 +185,7 @@ function removeItem(index) {
   updateCartCount();
 }
 
-// 5. CHECKOUT LOGIC (Used in Checkout Page)
+// 9. CHECKOUT LOGIC
 function prepareCheckout() {
   const mmuCheckbox = document.getElementById("mmuCheck");
   const priceBox = document.getElementById("priceBox");
@@ -67,40 +196,31 @@ function prepareCheckout() {
     let discount = isMMU ? subtotal * 0.10 : 0;
     let finalTotal = subtotal - discount;
 
-    // Display logic
     priceBox.innerHTML = `
       <p>Subtotal: RM${subtotal.toFixed(2)}</p>
-      ${isMMU ? `<p style="color:var(--pink); font-weight:bold;">MMU Discount (10%): -RM${discount.toFixed(2)}</p>` : ""}
+      ${isMMU ? `<p style="color:#ff6f91; font-weight:bold;">MMU Discount: -RM${discount.toFixed(2)}</p>` : ""}
       <hr style="border:0.5px solid #eee">
-      <h3>Total to Pay: RM${finalTotal.toFixed(2)}</h3>
+      <h3>Total: RM${finalTotal.toFixed(2)}</h3>
     `;
 
-    // Populate Hidden Netlify Fields
-    const itemsString = cart.map(i => i.bundle).join(", ");
+    const itemsString = cart.map(i => `${i.bundle} (${i.details})`).join("\n");
     document.getElementById("orderData").value = itemsString;
     document.getElementById("finalPrice").value = finalTotal.toFixed(2);
     document.getElementById("mmuStatus").value = isMMU ? "Yes" : "No";
     
-    // Generate Stable Order ID
     let orderID = localStorage.getItem("orderID");
     if (!orderID) {
       orderID = "MB-" + Math.floor(1000 + Math.random() * 9000);
       localStorage.setItem("orderID", orderID);
     }
     document.getElementById("orderID").value = orderID;
-
-    // Save for Thank You page
     localStorage.setItem("lastOrderTotal", finalTotal.toFixed(2));
   }
 
-  if (mmuCheckbox) {
-    mmuCheckbox.addEventListener("change", calculateTotal);
-  }
-  
-  calculateTotal(); // Run once on load
+  if (mmuCheckbox) mmuCheckbox.addEventListener("change", calculateTotal);
+  calculateTotal();
 }
 
-// 6. THANK YOU PAGE
 function showThankYou() {
   const orderID = localStorage.getItem("orderID");
   const total = localStorage.getItem("lastOrderTotal");
@@ -112,14 +232,12 @@ function showThankYou() {
   }
 
   if (waLink) {
-    // This is your business number
     const phone = "60166113563"; 
     const text = `Hi! I placed an order (ID: ${orderID}). Total: RM${total}. Sending payment proof now!`;
     waLink.href = `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
   }
 }
 
-// Auto-run on every page load
 document.addEventListener("DOMContentLoaded", () => {
   updateCartCount();
 });
