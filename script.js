@@ -1,14 +1,11 @@
+/* script.js */
+console.log("Script loaded!"); // Debug check
+
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
 // --- GLOBAL VARIABLES ---
 let currentProduct = {};
-let counts = {
-  apple: 0,
-  cheese: 0,
-  earring: 0,
-  bracelet: 0,
-  charm: 0
-};
+let counts = { apple: 0, cheese: 0, earring: 0, bracelet: 0, charm: 0 };
 
 // 1. UPDATE NAV CART COUNT
 function updateCartCount() {
@@ -16,42 +13,51 @@ function updateCartCount() {
   if (el) el.innerText = cart.length;
 }
 
-// 2. DIRECT ADD (For Ala Carte Accessories)
-function addAccessory(name, price) {
-  addToCartFinal(name, price, "No customization");
-}
-
-// 3. OPEN SMART MODAL
-// arguments: Name, Price, How many Cakes?, How many Accessories?
+// 2. OPEN THE POPUP (The "Smart Modal")
 function openSmartModal(name, price, cakeLimit, accLimit) {
-  // Reset state
+  // Save current product details
   currentProduct = { name, price, cakeLimit, accLimit };
+  
+  // Reset counts to 0
   counts = { apple: 0, cheese: 0, earring: 0, bracelet: 0, charm: 0 };
+  document.getElementById("qtyApple").innerText = "0";
+  document.getElementById("qtyCheese").innerText = "0";
+  document.getElementById("qtyEarring").innerText = "0";
+  document.getElementById("qtyBracelet").innerText = "0";
+  document.getElementById("qtyCharm").innerText = "0";
 
-  // Show/Hide Sections based on limits
+  // Show/Hide Sections based on what the product allows
+  // If cakeLimit is 0, hide the cake section
   document.getElementById("cakeSection").style.display = cakeLimit > 0 ? "block" : "none";
+  // If accLimit is 0, hide the accessory section
   document.getElementById("accSection").style.display = accLimit > 0 ? "block" : "none";
 
-  // Update Text
+  // Update Title
   document.getElementById("modalTitle").innerText = `Customize: ${name}`;
   
-  // Show Modal
+  // Show the Modal
   document.getElementById("flavorModal").style.display = "flex";
+  
   updateModalUI();
 }
 
-// 4. CHANGE QUANTITY
+// 3. CLOSE THE POPUP
+function closeModal() {
+  document.getElementById("flavorModal").style.display = "none";
+}
+
+// 4. CHANGE QUANTITY (+/- Buttons)
 function changeQty(type, change) {
-  // Determine if this is a CAKE or an ACCESSORY
+  // Check if we are changing a Cake or an Accessory
   const isCake = (type === 'apple' || type === 'cheese');
   const limit = isCake ? currentProduct.cakeLimit : currentProduct.accLimit;
   
-  // Calculate current totals
+  // Calculate how many we have selected so far
   const currentTotal = isCake 
     ? (counts.apple + counts.cheese)
     : (counts.earring + counts.bracelet + counts.charm);
 
-  // Logic: Allow add if under limit, allow subtract if above 0
+  // Logic: Add if under limit, Subtract if above 0
   if (change > 0 && currentTotal < limit) {
     counts[type]++;
   } else if (change < 0 && counts[type] > 0) {
@@ -61,63 +67,55 @@ function changeQty(type, change) {
   updateModalUI();
 }
 
-// 5. UPDATE UI & VALIDATE
+// 5. UPDATE POPUP TEXT (Validation)
 function updateModalUI() {
-  // Update numbers
+  // Update the numbers on screen
   document.getElementById("qtyApple").innerText = counts.apple;
   document.getElementById("qtyCheese").innerText = counts.cheese;
   document.getElementById("qtyEarring").innerText = counts.earring;
   document.getElementById("qtyBracelet").innerText = counts.bracelet;
   document.getElementById("qtyCharm").innerText = counts.charm;
 
-  // Calculate Totals
+  // Check totals
   const totalCakes = counts.apple + counts.cheese;
   const totalAcc = counts.earring + counts.bracelet + counts.charm;
   
-  // Messages
-  const cakeMsg = document.getElementById("cakeMsg");
-  const accMsg = document.getElementById("accMsg");
   const btn = document.getElementById("confirmBtn");
-
-  // Status Logic
   let cakesOk = true;
   let accOk = true;
 
+  // Validate Cakes
   if (currentProduct.cakeLimit > 0) {
     if (totalCakes === currentProduct.cakeLimit) {
-      cakeMsg.innerText = "Cakes Selected ✅";
-      cakeMsg.style.color = "green";
+      cakesOk = true;
     } else {
-      cakeMsg.innerText = `Pick ${currentProduct.cakeLimit - totalCakes} more cakes`;
-      cakeMsg.style.color = "var(--pink)";
       cakesOk = false;
+      btn.innerText = `Pick ${currentProduct.cakeLimit - totalCakes} more cakes`;
     }
   }
 
+  // Validate Accessories
   if (currentProduct.accLimit > 0) {
     if (totalAcc === currentProduct.accLimit) {
-      accMsg.innerText = "Accessories Selected ✅";
-      accMsg.style.color = "green";
+      accOk = true;
     } else {
-      accMsg.innerText = `Pick ${currentProduct.accLimit - totalAcc} more accessories`;
-      accMsg.style.color = "var(--pink)";
       accOk = false;
+      btn.innerText = `Pick ${currentProduct.accLimit - totalAcc} more accessories`;
     }
   }
 
-  // Enable Button if both are OK
+  // If everything is valid, enable the button
   if (cakesOk && accOk) {
     btn.disabled = false;
-    btn.style.background = "var(--pink)";
+    btn.style.background = "#ff6f91"; // Pink
     btn.innerText = "Add to Cart 💖";
   } else {
     btn.disabled = true;
-    btn.style.background = "#ccc";
-    btn.innerText = "Incomplete Selection";
+    btn.style.background = "#ccc"; // Grey
   }
 }
 
-// 6. CONFIRM SELECTION
+// 6. CONFIRM & ADD TO CART
 function confirmSelection() {
   let details = [];
   
@@ -127,27 +125,31 @@ function confirmSelection() {
   if (counts.bracelet > 0) details.push(`${counts.bracelet} Bracelet`);
   if (counts.charm > 0) details.push(`${counts.charm} Charm`);
 
-  addToCartFinal(currentProduct.name, currentProduct.price, details.join(", "));
-  closeModal();
-}
-
-function closeModal() {
-  document.getElementById("flavorModal").style.display = "none";
-}
-
-// 7. INTERNAL ADD TO CART
-function addToCartFinal(name, price, details) {
-  cart.push({
+  // Create the cart item
+  const item = {
     id: Date.now(),
-    bundle: name,
-    price: price,
-    details: details
-  });
+    bundle: currentProduct.name,
+    price: currentProduct.price,
+    details: details.join(", ") || "No Selection"
+  };
+
+  cart.push(item);
+  localStorage.setItem("cart", JSON.stringify(cart));
+  
+  closeModal();
+  updateCartCount();
+  alert("Added to cart! 🛒");
+}
+
+// 7. SIMPLE ADD (For items without options, if needed)
+function addAccessory(name, price) {
+  cart.push({ id: Date.now(), bundle: name, price: price, details: "Standard" });
   localStorage.setItem("cart", JSON.stringify(cart));
   updateCartCount();
+  alert("Added to cart!");
 }
 
-// 8. LOAD CART
+// 8. LOAD CART PAGE
 function loadCart() {
   const container = document.getElementById("cartItems");
   const subtotalEl = document.getElementById("subtotal");
@@ -157,7 +159,7 @@ function loadCart() {
   let total = 0;
 
   if (cart.length === 0) {
-    container.innerHTML = "<p>Your cart is empty 😢</p>";
+    container.innerHTML = "<p>Cart is empty</p>";
   } else {
     cart.forEach((item, index) => {
       total += item.price;
@@ -168,13 +170,11 @@ function loadCart() {
             <div style="font-size:0.85rem; color:#666;">${item.details}</div>
           </div>
           <span>RM${item.price} 
-            <button onclick="removeItem(${index})" style="padding:2px 8px; margin-left:10px; border-radius:50%; border:none; background:#eee; cursor:pointer;">x</button>
+            <button onclick="removeItem(${index})" style="background:#eee; border:none; border-radius:50%; padding:5px 10px; margin-left:10px;">x</button>
           </span>
-        </div>
-      `;
+        </div>`;
     });
   }
-
   if (subtotalEl) subtotalEl.innerText = "RM" + total;
 }
 
@@ -185,7 +185,7 @@ function removeItem(index) {
   updateCartCount();
 }
 
-// 9. CHECKOUT LOGIC
+// 9. CHECKOUT PAGE
 function prepareCheckout() {
   const mmuCheckbox = document.getElementById("mmuCheck");
   const priceBox = document.getElementById("priceBox");
@@ -203,11 +203,11 @@ function prepareCheckout() {
       <h3>Total: RM${finalTotal.toFixed(2)}</h3>
     `;
 
-    const itemsString = cart.map(i => `${i.bundle} (${i.details})`).join("\n");
-    document.getElementById("orderData").value = itemsString;
+    document.getElementById("orderData").value = cart.map(i => `${i.bundle} (${i.details})`).join(" | ");
     document.getElementById("finalPrice").value = finalTotal.toFixed(2);
     document.getElementById("mmuStatus").value = isMMU ? "Yes" : "No";
     
+    // Order ID
     let orderID = localStorage.getItem("orderID");
     if (!orderID) {
       orderID = "MB-" + Math.floor(1000 + Math.random() * 9000);
@@ -221,6 +221,7 @@ function prepareCheckout() {
   calculateTotal();
 }
 
+// 10. THANK YOU PAGE
 function showThankYou() {
   const orderID = localStorage.getItem("orderID");
   const total = localStorage.getItem("lastOrderTotal");
@@ -230,14 +231,10 @@ function showThankYou() {
     document.getElementById("dispOrderID").innerText = orderID;
     document.getElementById("dispTotal").innerText = "RM" + total;
   }
-
   if (waLink) {
-    const phone = "60166113563"; 
-    const text = `Hi! I placed an order (ID: ${orderID}). Total: RM${total}. Sending payment proof now!`;
-    waLink.href = `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
+    const text = `Hi! Order ID: ${orderID}. Total: RM${total}. Sending payment proof!`;
+    waLink.href = `https://wa.me/60166113563?text=${encodeURIComponent(text)}`;
   }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  updateCartCount();
-});
+document.addEventListener("DOMContentLoaded", updateCartCount);
