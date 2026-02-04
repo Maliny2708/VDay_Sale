@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Checkout</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>Final Confirmation 💕</h1>
+
+<form name="vday-orders" method="POST" data-netlify="true" action="thankyou.html">
+  <input type="hidden" name="form-name" value="vday-orders">
+  <input type="hidden" name="orderData" id="orderData">
+  <input type="hidden" name="total" id="finalTotal">
+
+  <label>
+    <input type="checkbox" id="mmu"> I am an MMU student (10% off)
+  </label>
+
+  <button type="submit" onclick="submitOrder()">Submit Order</button>
+</form>
+
+<script src="script.js"></script>
+</body>
+</html>

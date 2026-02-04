@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Order – Sugar & Shine</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>Build Your Order 🍰</h1>
+
+<label>Bundle Type</label>
+<select id="bundle">
+  <option value="">Select</option>
+  <option value="combo1">Combo 1 – RM30</option>
+  <option value="combo2">Combo 2 – RM50</option>
+  <option value="duo">Duo Combo – RM35</option>
+  <option value="bo2">Box of 2 – RM20</option>
+  <option value="bo4">Box of 4 – RM36</option>
+</select>
+
+<div id="cakes"></div>
+<div id="accessories"></div>
+
+<label>
+  <input type="checkbox" id="cardToggle"> Add Card
+</label>
+<textarea id="cardMessage" maxlength="180" placeholder="Card message (max 180)" style="display:none"></textarea>
+
+<button onclick="addToCart()">Add to Cart</button>
+
+<hr>
+
+<h2>Your Cart</h2>
+<div id="cartPreview"></div>
+
+<a href="cart.html" class="btn-primary">Review Cart</a>
+
+<script src="script.js"></script>
+</body>
+</html>
