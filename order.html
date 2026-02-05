@@ -4,6 +4,61 @@
   <title>Order Here</title>
   <link rel="stylesheet" href="style.css">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    /* Styling for the Earring Design Selection Rows */
+    .design-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      border: 1px solid #f0f0f0;
+      border-radius: 10px;
+      margin-bottom: 8px;
+      transition: background 0.2s;
+    }
+    .design-row:hover {
+      background: #fafafa;
+    }
+    .design-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      text-align: left;
+    }
+    .thumb {
+      width: 50px;
+      height: 50px;
+      border-radius: 8px;
+      object-fit: cover;
+      border: 1px solid #ddd;
+      background: #eee;
+    }
+    .qty-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .qty-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 1px solid #ddd;
+      background: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .qty-btn:active { background: #eee; }
+    
+    .section-header {
+      text-align: left;
+      font-size: 0.9rem;
+      color: #888;
+      font-weight: bold;
+      margin: 20px 0 10px 0;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+  </style>
 </head>
 <body>
 
@@ -28,7 +83,7 @@
     </div>
 
     <div class="product-card">
-      <img src="assets/images/duocombo.jpeg">
+      <img src="assets/images/duo.jpeg">
       <h3>Only Ours - Duo Combo</h3>
       <p>Box of 2 Cakes + 2 Accessories</p>
       <p><strong>RM35</strong></p>
@@ -36,7 +91,7 @@
     </div>
 
     <div class="product-card">
-      <img src="assets/images/Combo2.jpeg">
+      <img src="assets/images/combo2.jpeg">
       <h3>After Midnight - Combo 2</h3>
       <p>Box of 4 Cakes + 2 Accessories</p>
       <p><strong>RM50</strong></p>
@@ -66,9 +121,10 @@
     <div class="product-card">
       <img src="assets/images/EarringMenu.jpeg">
       <h3>Earrings</h3>
-      <p>RM10</p>
-      <button onclick="addAccessory('Earrings', 10)">Add to Cart</button>
+      <p>RM10 / pair</p>
+      <button onclick="openSmartModal('Earrings', 10, 0, 10)">Select Design</button>
     </div>
+    
     <div class="product-card">
       <img src="assets/images/Bracelet.jpeg">
       <h3>Bracelet</h3>
@@ -89,48 +145,106 @@
       
       <div id="cakeSection">
         <h4 style="margin-top:15px; border-bottom:1px solid #eee;">Select Cakes</h4>
-        <div style="display:flex; justify-content:space-between; margin:10px 0;">
-          <span>🍏 Apple Crumble</span>
-          <div>
-            <button onclick="changeQty('apple', -1)">-</button>
-            <span id="qtyApple" style="margin:0 10px; font-weight:bold;">0</span>
-            <button onclick="changeQty('apple', 1)">+</button>
+        <div class="design-row">
+          <span style="font-weight:bold;">🍏 Apple Crumble</span>
+          <div class="qty-controls">
+            <button class="qty-btn" onclick="changeQty('apple', -1)">-</button>
+            <span id="qtyApple">0</span>
+            <button class="qty-btn" onclick="changeQty('apple', 1)">+</button>
           </div>
         </div>
-        <div style="display:flex; justify-content:space-between; margin:10px 0;">
-          <span>🧀 Cheesecake</span>
-          <div>
-            <button onclick="changeQty('cheese', -1)">-</button>
-            <span id="qtyCheese" style="margin:0 10px; font-weight:bold;">0</span>
-            <button onclick="changeQty('cheese', 1)">+</button>
+        <div class="design-row">
+          <span style="font-weight:bold;">🧀 Cheesecake</span>
+          <div class="qty-controls">
+            <button class="qty-btn" onclick="changeQty('cheese', -1)">-</button>
+            <span id="qtyCheese">0</span>
+            <button class="qty-btn" onclick="changeQty('cheese', 1)">+</button>
           </div>
         </div>
       </div>
 
       <div id="accSection">
         <h4 style="margin-top:15px; border-bottom:1px solid #eee;">Select Accessories</h4>
-        <div style="display:flex; justify-content:space-between; margin:10px 0;">
-          <span>👂 Earrings</span>
-          <div>
-            <button onclick="changeQty('earring', -1)">-</button>
-            <span id="qtyEarring" style="margin:0 10px; font-weight:bold;">0</span>
-            <button onclick="changeQty('earring', 1)">+</button>
+        
+        <div class="section-header">Earring Designs</div>
+
+        <div class="design-row">
+          <div class="design-left">
+            <img src="assets/images/earring1.jpeg" class="thumb">
+            <span>Design 1</span>
+          </div>
+          <div class="qty-controls">
+            <button class="qty-btn" onclick="changeQty('earring1', -1)">-</button>
+            <span id="qtyEarring1">0</span>
+            <button class="qty-btn" onclick="changeQty('earring1', 1)">+</button>
           </div>
         </div>
-        <div style="display:flex; justify-content:space-between; margin:10px 0;">
-          <span>💍 Bracelet</span>
-          <div>
-            <button onclick="changeQty('bracelet', -1)">-</button>
-            <span id="qtyBracelet" style="margin:0 10px; font-weight:bold;">0</span>
-            <button onclick="changeQty('bracelet', 1)">+</button>
+
+        <div class="design-row">
+          <div class="design-left">
+            <img src="assets/images/earring2.jpeg" class="thumb">
+            <span>Design 2</span>
+          </div>
+          <div class="qty-controls">
+            <button class="qty-btn" onclick="changeQty('earring2', -1)">-</button>
+            <span id="qtyEarring2">0</span>
+            <button class="qty-btn" onclick="changeQty('earring2', 1)">+</button>
           </div>
         </div>
-        <div style="display:flex; justify-content:space-between; margin:10px 0;">
-          <span>🎀 Bag Charm</span>
-          <div>
-            <button onclick="changeQty('charm', -1)">-</button>
-            <span id="qtyCharm" style="margin:0 10px; font-weight:bold;">0</span>
-            <button onclick="changeQty('charm', 1)">+</button>
+
+        <div class="design-row">
+          <div class="design-left">
+            <img src="assets/images/earring3.jpeg" class="thumb">
+            <span>Design 3</span>
+          </div>
+          <div class="qty-controls">
+            <button class="qty-btn" onclick="changeQty('earring3', -1)">-</button>
+            <span id="qtyEarring3">0</span>
+            <button class="qty-btn" onclick="changeQty('earring3', 1)">+</button>
+          </div>
+        </div>
+
+        <div class="design-row">
+          <div class="design-left">
+            <img src="assets/images/earring4.jpeg" class="thumb">
+            <span>Design 4</span>
+          </div>
+          <div class="qty-controls">
+            <button class="qty-btn" onclick="changeQty('earring4', -1)">-</button>
+            <span id="qtyEarring4">0</span>
+            <button class="qty-btn" onclick="changeQty('earring4', 1)">+</button>
+          </div>
+        </div>
+
+        <div class="design-row">
+          <div class="design-left">
+            <img src="assets/images/earring5.jpeg" class="thumb">
+            <span>Design 5</span>
+          </div>
+          <div class="qty-controls">
+            <button class="qty-btn" onclick="changeQty('earring5', -1)">-</button>
+            <span id="qtyEarring5">0</span>
+            <button class="qty-btn" onclick="changeQty('earring5', 1)">+</button>
+          </div>
+        </div>
+
+        <div class="section-header">Other Options</div>
+
+        <div class="design-row">
+          <div class="design-left"><span>💍 Bracelet</span></div>
+          <div class="qty-controls">
+            <button class="qty-btn" onclick="changeQty('bracelet', -1)">-</button>
+            <span id="qtyBracelet">0</span>
+            <button class="qty-btn" onclick="changeQty('bracelet', 1)">+</button>
+          </div>
+        </div>
+        
+        <div class="design-row">
+          <div class="design-left"><span>🎀 Bag Charm</span></div>
+          <div class="qty-controls">
+            <button class="qty-btn" onclick="changeQty('charm', -1)">-</button>
+            <span id="qtyCharm">0</span>
+            <button class="qty-btn" onclick="changeQty('charm', 1)">+</button>
           </div>
         </div>
       </div>
@@ -152,6 +266,3 @@
 <script src="script.js"></script>
 </body>
 </html>
-
-
-
