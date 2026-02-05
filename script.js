@@ -104,14 +104,12 @@ function updateModalUI() {
 function confirmSelection() {
   let details = [];
   
-  // Collect Flavors
   if (counts.apple > 0) details.push(`${counts.apple} Apple`);
   if (counts.cheese > 0) details.push(`${counts.cheese} Cheese`);
   if (counts.earring > 0) details.push(`${counts.earring} Earring`);
   if (counts.bracelet > 0) details.push(`${counts.bracelet} Bracelet`);
   if (counts.charm > 0) details.push(`${counts.charm} Charm`);
 
-  // Collect Card Message
   const cardCheck = document.getElementById("cardCheck");
   const cardText = document.getElementById("cardMessage");
   if (cardCheck && cardCheck.checked && cardText.value.trim() !== "") {
@@ -177,10 +175,12 @@ function removeItem(index) {
   updateCartCount();
 }
 
-// 10. CHECKOUT LOGIC
+// 10. CHECKOUT LOGIC (UPDATED WITH DATE/TIME/SUBTOTAL)
 function prepareCheckout() {
   const mmuCheckbox = document.getElementById("mmuCheck");
   const priceBox = document.getElementById("priceBox");
+  const dateSelect = document.getElementById("dateSelect");
+  const timeSelect = document.getElementById("timeSelect");
   
   function calculateTotal() {
     let subtotal = cart.reduce((sum, item) => sum + item.price, 0);
@@ -195,46 +195,56 @@ function prepareCheckout() {
       <h3>Total: RM${finalTotal.toFixed(2)}</h3>
     `;
 
+    // Populate Netlify Fields
     document.getElementById("orderData").value = cart.map(i => `${i.bundle} (${i.details})`).join(" | ");
+    document.getElementById("subtotalField").value = subtotal.toFixed(2); // NEW: Subtotal
     document.getElementById("finalPrice").value = finalTotal.toFixed(2);
     document.getElementById("mmuStatus").value = isMMU ? "Yes" : "No";
     
-    // Save MMU status and Order ID for the Thank You page
+    // Save to LocalStorage for Thank You Page
     localStorage.setItem("isMMU", isMMU ? "true" : "false"); 
-    
+    localStorage.setItem("lastOrderTotal", finalTotal.toFixed(2));
+
     let orderID = localStorage.getItem("orderID");
     if (!orderID) {
       orderID = "MB-" + Math.floor(1000 + Math.random() * 9000);
       localStorage.setItem("orderID", orderID);
     }
     document.getElementById("orderID").value = orderID;
-    localStorage.setItem("lastOrderTotal", finalTotal.toFixed(2));
+  }
+
+  // Listener to capture Date/Time changes into hidden fields
+  function updateDeliveryInfo() {
+    if(dateSelect) document.getElementById("dateField").value = dateSelect.value;
+    if(timeSelect) document.getElementById("timeField").value = timeSelect.value;
   }
 
   if (mmuCheckbox) mmuCheckbox.addEventListener("change", calculateTotal);
+  if (dateSelect) dateSelect.addEventListener("change", updateDeliveryInfo);
+  if (timeSelect) timeSelect.addEventListener("change", updateDeliveryInfo);
+
   calculateTotal();
 }
 
-// 11. THANK YOU PAGE LOGIC (UPDATED)
+// 11. THANK YOU PAGE LOGIC
 function showThankYou() {
   const orderID = localStorage.getItem("orderID");
   const total = localStorage.getItem("lastOrderTotal");
-  const isMMU = localStorage.getItem("isMMU") === "true"; // Retrieve MMU status
+  const isMMU = localStorage.getItem("isMMU") === "true"; 
   const waLink = document.getElementById("waLink");
 
   if (document.getElementById("dispOrderID")) {
     document.getElementById("dispOrderID").innerText = orderID || "Error";
     document.getElementById("dispTotal").innerText = "RM" + (total || "0.00");
     
-    // If they are an MMU student, show the extra line
     if (isMMU) {
        document.getElementById("dispMMU").style.display = "flex";
     } else {
-       document.getElementById("dispMMU").style.display = "none";
+       if(document.getElementById("dispMMU")) 
+          document.getElementById("dispMMU").style.display = "none";
     }
   }
 
-  // Updated WhatsApp Message
   if (waLink) {
     const text = `Attached is the order details for payment and confirmation. Order ID: ${orderID}`;
     waLink.href = `https://wa.me/60166113563?text=${encodeURIComponent(text)}`;
