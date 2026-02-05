@@ -4,6 +4,50 @@
   <title>Checkout</title>
   <link rel="stylesheet" href="style.css">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    /* Specific styles for the checkout layout */
+    .checkout-section {
+      background: #f9f9f9;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #eee;
+    }
+    .radio-group {
+      display: flex;
+      gap: 15px;
+      margin: 10px 0;
+    }
+    .radio-option {
+      flex: 1;
+      border: 1px solid #ddd;
+      padding: 10px;
+      border-radius: 10px;
+      text-align: center;
+      cursor: pointer;
+      background: white;
+      transition: all 0.2s;
+    }
+    .radio-option input {
+      display: none;
+    }
+    .radio-option.selected {
+      border-color: var(--pink);
+      background: #fff0f5;
+      color: var(--pink);
+      font-weight: bold;
+    }
+    .disclaimer {
+      font-size: 0.85rem;
+      color: #777;
+      background: #fff8e1; /* Light yellow */
+      padding: 10px;
+      border-radius: 8px;
+      margin-top: 10px;
+      display: none; /* Hidden by default */
+      border-left: 3px solid #ffc107;
+    }
+  </style>
 </head>
 <body>
 
@@ -21,8 +65,14 @@
       <input type="hidden" name="form-name" value="valentines_order">
       <input type="hidden" name="Order_ID" id="orderID">
       <input type="hidden" name="Items" id="orderData">
+      
+      <input type="hidden" name="Subtotal" id="subtotalField">
       <input type="hidden" name="Final_Total" id="finalPrice">
       <input type="hidden" name="MMU_Student" id="mmuStatus">
+      
+      <input type="hidden" name="Delivery_Method" id="methodField">
+      <input type="hidden" name="Delivery_Date" id="dateField">
+      <input type="hidden" name="Delivery_Time" id="timeField">
 
       <label>Your Name</label>
       <input type="text" name="customer_name" required placeholder="e.g. Maliny">
@@ -30,8 +80,47 @@
       <label>Phone Number (WhatsApp)</label>
       <input type="tel" name="phone" required placeholder="012-3456789">
 
+      <label style="margin-top:20px;">Delivery Method</label>
+      <div class="radio-group">
+        <label class="radio-option" id="optDelivery" onclick="selectMethod('delivery')">
+          Delivery 🚗
+          <input type="radio" name="method_ui" value="Delivery">
+        </label>
+        <label class="radio-option" id="optPickup" onclick="selectMethod('pickup')">
+          Self Pickup 🛍️
+          <input type="radio" name="method_ui" value="Pickup">
+        </label>
+      </div>
+
+      <div id="deliveryDisclaimer" class="disclaimer">
+        <strong>Note:</strong> Delivery price will be checked & quoted via WhatsApp (Lalamove/Grab) after order submission.
+      </div>
+      <div id="pickupDisclaimer" class="disclaimer">
+        <strong>Location:</strong> Kepong. Full address sent via WhatsApp after confirmation.
+      </div>
+
+      <div class="checkout-section">
+        <label>Preferred Date</label>
+        <select id="dateSelect" required style="width:100%; padding:12px; border-radius:10px; border:1px solid #ddd; margin-bottom:15px; background:white;">
+          <option value="" disabled selected>Select Date</option>
+          <option value="13th Feb">13th Feb (Thursday)</option>
+          <option value="14th Feb">14th Feb (Friday)</option>
+          <option value="15th Feb">15th Feb (Saturday)</option>
+        </select>
+
+        <label>Preferred Time</label>
+        <select id="timeSelect" required style="width:100%; padding:12px; border-radius:10px; border:1px solid #ddd; background:white;">
+          <option value="10am - 1pm">10am - 1pm</option>
+          <option value="Other">Other (Discuss on WhatsApp)</option>
+        </select>
+        <p style="font-size:0.75rem; color:#888; margin-top:5px;">*Time is subject to order volume & drivers.</p>
+      </div>
+
       <label>Delivery Address / Pickup Note</label>
-      <textarea name="address" required placeholder="Full address..."></textarea>
+      <textarea name="address" required placeholder="House number, street, condo name..."></textarea>
+
+      <label>Postcode</label>
+      <input type="number" name="postcode" required placeholder="e.g. 52100">
 
       <div style="background:#fff0f5; padding:15px; border-radius:10px; margin:15px 0;">
         <label style="display:flex; align-items:center; cursor:pointer;">
@@ -47,6 +136,30 @@
   </div>
 
 <script src="script.js"></script>
-<script>prepareCheckout();</script>
+<script>
+  prepareCheckout();
+  
+  // Initialize Method Selection
+  function selectMethod(type) {
+    // Visual Updates
+    document.getElementById('optDelivery').classList.remove('selected');
+    document.getElementById('optPickup').classList.remove('selected');
+    document.getElementById('deliveryDisclaimer').style.display = 'none';
+    document.getElementById('pickupDisclaimer').style.display = 'none';
+
+    if (type === 'delivery') {
+      document.getElementById('optDelivery').classList.add('selected');
+      document.getElementById('deliveryDisclaimer').style.display = 'block';
+      document.getElementById('methodField').value = "Delivery";
+    } else {
+      document.getElementById('optPickup').classList.add('selected');
+      document.getElementById('pickupDisclaimer').style.display = 'block';
+      document.getElementById('methodField').value = "Self Pickup (Kepong)";
+    }
+  }
+  
+  // Default to delivery
+  selectMethod('delivery');
+</script>
 </body>
 </html>
