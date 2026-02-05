@@ -115,7 +115,6 @@ function confirmSelection() {
   const cardCheck = document.getElementById("cardCheck");
   const cardText = document.getElementById("cardMessage");
   if (cardCheck && cardCheck.checked && cardText.value.trim() !== "") {
-    // Sanitize message to prevent issues
     let cleanMsg = cardText.value.replace(/(\r\n|\n|\r)/gm, " "); 
     details.push(`[Card: "${cleanMsg}"]`);
   }
@@ -200,6 +199,9 @@ function prepareCheckout() {
     document.getElementById("finalPrice").value = finalTotal.toFixed(2);
     document.getElementById("mmuStatus").value = isMMU ? "Yes" : "No";
     
+    // Save MMU status and Order ID for the Thank You page
+    localStorage.setItem("isMMU", isMMU ? "true" : "false"); 
+    
     let orderID = localStorage.getItem("orderID");
     if (!orderID) {
       orderID = "MB-" + Math.floor(1000 + Math.random() * 9000);
@@ -213,18 +215,28 @@ function prepareCheckout() {
   calculateTotal();
 }
 
-// 11. THANK YOU PAGE LOGIC
+// 11. THANK YOU PAGE LOGIC (UPDATED)
 function showThankYou() {
   const orderID = localStorage.getItem("orderID");
   const total = localStorage.getItem("lastOrderTotal");
+  const isMMU = localStorage.getItem("isMMU") === "true"; // Retrieve MMU status
   const waLink = document.getElementById("waLink");
 
   if (document.getElementById("dispOrderID")) {
     document.getElementById("dispOrderID").innerText = orderID || "Error";
     document.getElementById("dispTotal").innerText = "RM" + (total || "0.00");
+    
+    // If they are an MMU student, show the extra line
+    if (isMMU) {
+       document.getElementById("dispMMU").style.display = "flex";
+    } else {
+       document.getElementById("dispMMU").style.display = "none";
+    }
   }
+
+  // Updated WhatsApp Message
   if (waLink) {
-    const text = `Hi! Order ID: ${orderID}. Total: RM${total}. Sending payment proof!`;
+    const text = `Attached is the order details for payment and confirmation. Order ID: ${orderID}`;
     waLink.href = `https://wa.me/60166113563?text=${encodeURIComponent(text)}`;
   }
 }
