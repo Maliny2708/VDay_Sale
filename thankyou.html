@@ -26,6 +26,22 @@
       margin: 0 auto 20px;
     }
     .checkmark { font-size: 35px; color: #25D366; }
+    
+    /* Styles for the summary box */
+    .summary-box {
+      background: #FFF0F5;
+      padding: 20px;
+      border-radius: 15px;
+      margin: 20px 0;
+      text-align: left;
+    }
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      color: #555;
+    }
+    
     .wa-btn {
       background: #25D366;
       color: white;
@@ -33,9 +49,11 @@
       padding: 15px;
       border-radius: 50px;
       display: block;
-      margin-top: 20px;
+      margin-top: 10px;
       font-weight: bold;
+      transition: transform 0.2s;
     }
+    .wa-btn:hover { transform: translateY(-3px); }
   </style>
 </head>
 <body>
@@ -45,7 +63,7 @@
     <a href="index.html">Home</a>
   </div>
 
-  <div class="hero" style="background:none; height:100vh; padding-top:100px;">
+  <div class="hero" style="background:none; min-height:100vh; padding-top:100px; padding-bottom:50px;">
     <div class="thankyou-card">
       <div class="checkmark-circle">
         <span class="checkmark">✔</span>
@@ -53,15 +71,29 @@
       <h1>Order Placed!</h1>
       <p>Thank you for choosing Malz Bakes! 💖</p>
 
-      <div style="background:#FFF0F5; padding:20px; border-radius:15px; margin:20px 0; text-align:left;">
-        <p><strong>Order ID:</strong> <span id="dispOrderID">Loading...</span></p>
-        <p><strong>Total:</strong> <span id="dispTotal" style="color:#ff6f91; font-weight:bold;">...</span></p>
+      <div class="summary-box">
+        <div class="summary-row">
+          <span>Order ID:</span>
+          <strong id="dispOrderID">Loading...</strong>
+        </div>
+        
+        <div class="summary-row" id="dispMMU" style="display:none; color:#ff6f91;">
+          <span>Student Discount:</span>
+          <strong>Applied (10%)</strong>
+        </div>
+
+        <div class="summary-row" style="border-top:1px solid rgba(0,0,0,0.1); margin-top:10px; padding-top:10px;">
+          <span>Total:</span>
+          <strong id="dispTotal" style="color:#ff6f91; font-size:1.2rem;">...</strong>
+        </div>
       </div>
 
-      <p style="font-size:0.9rem; color:#666;">Please confirm via WhatsApp to finalize.</p>
+      <p style="font-size:0.9rem; color:#333; font-weight:bold; background:#f9f9f9; padding:10px; border-radius:10px; border:1px dashed #ccc;">
+        📸 Please screenshot this page & send it to the WhatsApp chat!
+      </p>
       
       <a id="waLink" href="#" class="wa-btn">
-        📱 Confirm on WhatsApp
+        📱 Send to WhatsApp
       </a>
     </div>
   </div>
