@@ -3,7 +3,7 @@
 :root {
   --pink: #ff6f91;
   --light-pink: #ffe3ec;
-  --glass-bg: rgba(255, 255, 255, 0.6);
+  --glass-bg: rgba(255, 255, 255, 0.85); /* Slightly less transparent for readability */
   --glass-border: rgba(255, 255, 255, 0.4);
   --blur: blur(12px);
   --shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
@@ -14,9 +14,13 @@
 body {
   margin: 0;
   font-family: 'Poppins', sans-serif;
-  background: linear-gradient(135deg, #ffe3ec, #fff0f5);
   color: #4a4a4a;
   min-height: 100vh;
+  /* GLOBAL BACKGROUND FIX */
+  background-image: url('assets/images/hero.jpeg'); 
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed; /* Keeps image still while scrolling */
 }
 
 /* NAVIGATION */
@@ -28,7 +32,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: var(--glass-bg);
+  background: rgba(255, 255, 255, 0.9); /* Stronger background for nav */
   backdrop-filter: var(--blur);
   border-bottom: 1px solid var(--glass-border);
   z-index: 100;
@@ -43,31 +47,28 @@ body {
   cursor: pointer;
 }
 
-/* HERO SECTION */
+/* HERO SECTION (Now transparent because body has the image) */
 .hero {
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
   padding: 20px;
-  /* UPDATED TO .jpeg */
-  background-image: url('assets/images/hero.jpeg'); 
-  background-size: cover;
-  background-position: center;
 }
 
 .hero-content {
-  background: rgba(255, 255, 255, 0.85);
+  background: var(--glass-bg);
   padding: 40px;
   border-radius: 20px;
   backdrop-filter: blur(5px);
   box-shadow: var(--shadow);
+  max-width: 600px;
 }
 
 h1 { color: var(--pink); font-size: 2.5rem; margin-bottom: 10px; }
-h2 { color: var(--pink); margin-top: 80px; text-align: center;}
+h2 { color: var(--pink); margin-top: 80px; text-align: center; background: var(--glass-bg); padding: 10px; border-radius: 10px; display: inline-block;}
 
 /* BUTTONS */
 button, .btn {
@@ -117,18 +118,19 @@ button:hover, .btn:hover {
   max-width: 500px;
   margin: 120px auto 50px;
   padding: 30px;
-  background: white;
+  background: var(--glass-bg); /* Matches theme */
   border-radius: 20px;
   box-shadow: var(--shadow);
 }
 
-input, textarea {
+input, textarea, select {
   width: 100%;
   padding: 12px;
   margin: 10px 0;
   border: 1px solid #ddd;
   border-radius: 10px;
   font-family: inherit;
+  background: white;
 }
 
 .cart-item {
