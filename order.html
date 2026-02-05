@@ -45,8 +45,14 @@
       border: 1px solid #ddd;
       background: pink;
       font-weight: bold;
-      font-position: center;
       cursor: pointer;
+
+      /* Flexbox centering magic */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0; /* Removes default button padding */
+      line-height: 1; /* Ensures text aligns vertically */
     }
     .qty-btn:active { background: #eee; }
     
@@ -267,6 +273,7 @@
 <script src="script.js"></script>
 </body>
 </html>
+
 
 
 
