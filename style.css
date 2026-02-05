@@ -52,7 +52,7 @@ body {
   align-items: center;
   text-align: center;
   padding: 20px;
-  /* Ensure your file is named exactly Hero.jpg */
+  /* UPDATED TO .jpeg */
   background-image: url('assets/images/hero.jpeg'); 
   background-size: cover;
   background-position: center;
@@ -95,7 +95,7 @@ button:hover, .btn:hover {
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 30px;
   padding: 20px 5%;
-  margin-top: 80px; /* Space for fixed nav */
+  margin-top: 80px;
   padding-bottom: 50px;
 }
 
@@ -144,6 +144,4 @@ input, textarea {
   h1 { font-size: 2rem; }
   .grid { grid-template-columns: 1fr; }
   .nav { padding: 15px 20px; }
-
 }
-
