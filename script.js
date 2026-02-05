@@ -5,7 +5,12 @@ let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
 // --- GLOBAL VARIABLES ---
 let currentProduct = {};
-let counts = { apple: 0, cheese: 0, earring: 0, bracelet: 0, charm: 0 };
+// We track every design separately
+let counts = { 
+  apple: 0, cheese: 0, 
+  earring1: 0, earring2: 0, earring3: 0, earring4: 0, earring5: 0,
+  bracelet: 0, charm: 0 
+};
 
 // 1. UPDATE NAV CART COUNT
 function updateCartCount() {
@@ -16,15 +21,26 @@ function updateCartCount() {
 // 2. OPEN THE POPUP
 function openSmartModal(name, price, cakeLimit, accLimit) {
   currentProduct = { name, price, cakeLimit, accLimit };
-  counts = { apple: 0, cheese: 0, earring: 0, bracelet: 0, charm: 0 };
   
-  // Reset UI
+  // Reset all counts
+  counts = { 
+    apple: 0, cheese: 0, 
+    earring1: 0, earring2: 0, earring3: 0, earring4: 0, earring5: 0,
+    bracelet: 0, charm: 0 
+  };
+  
+  // Reset UI Display
   document.getElementById("qtyApple").innerText = "0";
   document.getElementById("qtyCheese").innerText = "0";
-  document.getElementById("qtyEarring").innerText = "0";
+  document.getElementById("qtyEarring1").innerText = "0";
+  document.getElementById("qtyEarring2").innerText = "0";
+  document.getElementById("qtyEarring3").innerText = "0";
+  document.getElementById("qtyEarring4").innerText = "0";
+  document.getElementById("qtyEarring5").innerText = "0";
   document.getElementById("qtyBracelet").innerText = "0";
   document.getElementById("qtyCharm").innerText = "0";
 
+  // Reset Card Section
   const cardCheck = document.getElementById("cardCheck");
   const cardText = document.getElementById("cardMessage");
   if (cardCheck) {
@@ -33,8 +49,10 @@ function openSmartModal(name, price, cakeLimit, accLimit) {
     cardText.style.display = "none";
   }
 
+  // Show or Hide sections depending on what we are buying
   document.getElementById("cakeSection").style.display = cakeLimit > 0 ? "block" : "none";
   document.getElementById("accSection").style.display = accLimit > 0 ? "block" : "none";
+
   document.getElementById("modalTitle").innerText = `Customize: ${name}`;
   document.getElementById("flavorModal").style.display = "flex";
   
@@ -50,10 +68,17 @@ function closeModal() {
 function changeQty(type, change) {
   const isCake = (type === 'apple' || type === 'cheese');
   const limit = isCake ? currentProduct.cakeLimit : currentProduct.accLimit;
-  const currentTotal = isCake 
-    ? (counts.apple + counts.cheese)
-    : (counts.earring + counts.bracelet + counts.charm);
+  
+  const currentCakeTotal = counts.apple + counts.cheese;
+  
+  // Accessories Total = All designs + bracelet + charm
+  const currentAccTotal = 
+    counts.earring1 + counts.earring2 + counts.earring3 + counts.earring4 + counts.earring5 + 
+    counts.bracelet + counts.charm;
 
+  const currentTotal = isCake ? currentCakeTotal : currentAccTotal;
+
+  // Allow add if under limit, Allow subtract if above 0
   if (change > 0 && currentTotal < limit) {
     counts[type]++;
   } else if (change < 0 && counts[type] > 0) {
@@ -69,20 +94,35 @@ function toggleCard() {
   textarea.style.display = checkbox.checked ? "block" : "none";
 }
 
-// 6. UPDATE UI
+// 6. UPDATE UI & BUTTON STATE
 function updateModalUI() {
   document.getElementById("qtyApple").innerText = counts.apple;
   document.getElementById("qtyCheese").innerText = counts.cheese;
-  document.getElementById("qtyEarring").innerText = counts.earring;
+  document.getElementById("qtyEarring1").innerText = counts.earring1;
+  document.getElementById("qtyEarring2").innerText = counts.earring2;
+  document.getElementById("qtyEarring3").innerText = counts.earring3;
+  document.getElementById("qtyEarring4").innerText = counts.earring4;
+  document.getElementById("qtyEarring5").innerText = counts.earring5;
   document.getElementById("qtyBracelet").innerText = counts.bracelet;
   document.getElementById("qtyCharm").innerText = counts.charm;
 
   const totalCakes = counts.apple + counts.cheese;
-  const totalAcc = counts.earring + counts.bracelet + counts.charm;
+  const totalAcc = 
+    counts.earring1 + counts.earring2 + counts.earring3 + counts.earring4 + counts.earring5 + 
+    counts.bracelet + counts.charm;
+
   const btn = document.getElementById("confirmBtn");
   
   let cakesOk = (currentProduct.cakeLimit === 0) || (totalCakes === currentProduct.cakeLimit);
-  let accOk = (currentProduct.accLimit === 0) || (totalAcc === currentProduct.accLimit);
+  
+  let accOk = false;
+  if (currentProduct.name === "Earrings") {
+      // Ala Carte: Just need at least 1 item
+      accOk = totalAcc > 0;
+  } else {
+      // Bundle: Must match limit exactly
+      accOk = (currentProduct.accLimit === 0) || (totalAcc === currentProduct.accLimit);
+  }
 
   if (!cakesOk) btn.innerText = `Pick more cakes`;
   else if (!accOk) btn.innerText = `Pick more accessories`;
@@ -100,9 +140,17 @@ function updateModalUI() {
 // 7. CONFIRM SELECTION
 function confirmSelection() {
   let details = [];
+  
   if (counts.apple > 0) details.push(`${counts.apple} Apple`);
   if (counts.cheese > 0) details.push(`${counts.cheese} Cheese`);
-  if (counts.earring > 0) details.push(`${counts.earring} Earring`);
+  
+  // Add specific designs to details
+  if (counts.earring1 > 0) details.push(`${counts.earring1}x Earring(Design 1)`);
+  if (counts.earring2 > 0) details.push(`${counts.earring2}x Earring(Design 2)`);
+  if (counts.earring3 > 0) details.push(`${counts.earring3}x Earring(Design 3)`);
+  if (counts.earring4 > 0) details.push(`${counts.earring4}x Earring(Design 4)`);
+  if (counts.earring5 > 0) details.push(`${counts.earring5}x Earring(Design 5)`);
+  
   if (counts.bracelet > 0) details.push(`${counts.bracelet} Bracelet`);
   if (counts.charm > 0) details.push(`${counts.charm} Charm`);
 
@@ -112,11 +160,20 @@ function confirmSelection() {
     let cleanMsg = cardText.value.replace(/(\r\n|\n|\r)/gm, " "); 
     details.push(`[Card: "${cleanMsg}"]`);
   }
+  
+  // CALCULATE PRICE
+  let finalPrice = currentProduct.price;
+  
+  // If we are buying Ala Carte Earrings, price is RM10 * Quantity
+  if (currentProduct.name === "Earrings") {
+      let qty = counts.earring1 + counts.earring2 + counts.earring3 + counts.earring4 + counts.earring5;
+      finalPrice = qty * 10;
+  }
 
   cart.push({
     id: Date.now(),
     bundle: currentProduct.name,
-    price: currentProduct.price,
+    price: finalPrice,
     details: details.join(", ") || "Standard"
   });
 
@@ -126,7 +183,7 @@ function confirmSelection() {
   alert("Added to cart! 🛒");
 }
 
-// 8. ADD ACCESSORY
+// 8. ADD ACCESSORY DIRECTLY (For Bracelet/Charm Ala Carte)
 function addAccessory(name, price) {
   cart.push({ id: Date.now(), bundle: name, price: price, details: "Standard" });
   localStorage.setItem("cart", JSON.stringify(cart));
@@ -231,12 +288,10 @@ function showThankYou() {
     if (isMMU) document.getElementById("dispMMU").style.display = "flex";
   }
 
-  // Set WhatsApp Link
   if (waLink) {
     const text = `Attached is the order details for payment and confirmation. Order ID: ${orderID}`;
     waLink.setAttribute("href", `https://wa.me/60166113563?text=${encodeURIComponent(text)}`);
     
-    // Add the Click Listener for Reset
     waLink.addEventListener("click", function() {
        finishOrder();
     });
@@ -245,12 +300,10 @@ function showThankYou() {
 
 // 12. FINISH ORDER (Reset everything)
 function finishOrder() {
-  // Clear cart and ID so the next order is fresh
   localStorage.removeItem("cart");
   localStorage.removeItem("orderID");
   localStorage.removeItem("lastOrderTotal");
   
-  // Wait 1 second (so WhatsApp opens) then go home
   setTimeout(() => {
     window.location.href = "index.html";
   }, 1000);
