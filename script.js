@@ -16,16 +16,15 @@ function updateCartCount() {
 // 2. OPEN THE POPUP
 function openSmartModal(name, price, cakeLimit, accLimit) {
   currentProduct = { name, price, cakeLimit, accLimit };
-  
-  // Reset counts
   counts = { apple: 0, cheese: 0, earring: 0, bracelet: 0, charm: 0 };
+  
+  // Reset UI
   document.getElementById("qtyApple").innerText = "0";
   document.getElementById("qtyCheese").innerText = "0";
   document.getElementById("qtyEarring").innerText = "0";
   document.getElementById("qtyBracelet").innerText = "0";
   document.getElementById("qtyCharm").innerText = "0";
 
-  // Reset Card Section
   const cardCheck = document.getElementById("cardCheck");
   const cardText = document.getElementById("cardMessage");
   if (cardCheck) {
@@ -34,10 +33,8 @@ function openSmartModal(name, price, cakeLimit, accLimit) {
     cardText.style.display = "none";
   }
 
-  // Show/Hide Sections
   document.getElementById("cakeSection").style.display = cakeLimit > 0 ? "block" : "none";
   document.getElementById("accSection").style.display = accLimit > 0 ? "block" : "none";
-
   document.getElementById("modalTitle").innerText = `Customize: ${name}`;
   document.getElementById("flavorModal").style.display = "flex";
   
@@ -65,14 +62,14 @@ function changeQty(type, change) {
   updateModalUI();
 }
 
-// 5. TOGGLE CARD MESSAGE BOX
+// 5. TOGGLE CARD
 function toggleCard() {
   const checkbox = document.getElementById("cardCheck");
   const textarea = document.getElementById("cardMessage");
   textarea.style.display = checkbox.checked ? "block" : "none";
 }
 
-// 6. UPDATE POPUP UI
+// 6. UPDATE UI
 function updateModalUI() {
   document.getElementById("qtyApple").innerText = counts.apple;
   document.getElementById("qtyCheese").innerText = counts.cheese;
@@ -103,7 +100,6 @@ function updateModalUI() {
 // 7. CONFIRM SELECTION
 function confirmSelection() {
   let details = [];
-  
   if (counts.apple > 0) details.push(`${counts.apple} Apple`);
   if (counts.cheese > 0) details.push(`${counts.cheese} Cheese`);
   if (counts.earring > 0) details.push(`${counts.earring} Earring`);
@@ -117,21 +113,20 @@ function confirmSelection() {
     details.push(`[Card: "${cleanMsg}"]`);
   }
 
-  const item = {
+  cart.push({
     id: Date.now(),
     bundle: currentProduct.name,
     price: currentProduct.price,
     details: details.join(", ") || "Standard"
-  };
+  });
 
-  cart.push(item);
   localStorage.setItem("cart", JSON.stringify(cart));
   closeModal();
   updateCartCount();
   alert("Added to cart! 🛒");
 }
 
-// 8. ADD ACCESSORY DIRECTLY
+// 8. ADD ACCESSORY
 function addAccessory(name, price) {
   cart.push({ id: Date.now(), bundle: name, price: price, details: "Standard" });
   localStorage.setItem("cart", JSON.stringify(cart));
@@ -139,7 +134,7 @@ function addAccessory(name, price) {
   alert("Added to cart!");
 }
 
-// 9. LOAD CART PAGE
+// 9. LOAD CART
 function loadCart() {
   const container = document.getElementById("cartItems");
   const subtotalEl = document.getElementById("subtotal");
@@ -175,7 +170,7 @@ function removeItem(index) {
   updateCartCount();
 }
 
-// 10. CHECKOUT LOGIC (UPDATED WITH DATE/TIME/SUBTOTAL)
+// 10. CHECKOUT
 function prepareCheckout() {
   const mmuCheckbox = document.getElementById("mmuCheck");
   const priceBox = document.getElementById("priceBox");
@@ -195,13 +190,11 @@ function prepareCheckout() {
       <h3>Total: RM${finalTotal.toFixed(2)}</h3>
     `;
 
-    // Populate Netlify Fields
     document.getElementById("orderData").value = cart.map(i => `${i.bundle} (${i.details})`).join(" | ");
-    document.getElementById("subtotalField").value = subtotal.toFixed(2); // NEW: Subtotal
+    document.getElementById("subtotalField").value = subtotal.toFixed(2);
     document.getElementById("finalPrice").value = finalTotal.toFixed(2);
     document.getElementById("mmuStatus").value = isMMU ? "Yes" : "No";
     
-    // Save to LocalStorage for Thank You Page
     localStorage.setItem("isMMU", isMMU ? "true" : "false"); 
     localStorage.setItem("lastOrderTotal", finalTotal.toFixed(2));
 
@@ -213,7 +206,6 @@ function prepareCheckout() {
     document.getElementById("orderID").value = orderID;
   }
 
-  // Listener to capture Date/Time changes into hidden fields
   function updateDeliveryInfo() {
     if(dateSelect) document.getElementById("dateField").value = dateSelect.value;
     if(timeSelect) document.getElementById("timeField").value = timeSelect.value;
@@ -226,7 +218,7 @@ function prepareCheckout() {
   calculateTotal();
 }
 
-// 11. THANK YOU PAGE LOGIC
+// 11. SHOW THANK YOU & RESET LOGIC
 function showThankYou() {
   const orderID = localStorage.getItem("orderID");
   const total = localStorage.getItem("lastOrderTotal");
@@ -236,19 +228,32 @@ function showThankYou() {
   if (document.getElementById("dispOrderID")) {
     document.getElementById("dispOrderID").innerText = orderID || "Error";
     document.getElementById("dispTotal").innerText = "RM" + (total || "0.00");
-    
-    if (isMMU) {
-       document.getElementById("dispMMU").style.display = "flex";
-    } else {
-       if(document.getElementById("dispMMU")) 
-          document.getElementById("dispMMU").style.display = "none";
-    }
+    if (isMMU) document.getElementById("dispMMU").style.display = "flex";
   }
 
+  // Set WhatsApp Link
   if (waLink) {
     const text = `Attached is the order details for payment and confirmation. Order ID: ${orderID}`;
-    waLink.href = `https://wa.me/60166113563?text=${encodeURIComponent(text)}`;
+    waLink.setAttribute("href", `https://wa.me/60166113563?text=${encodeURIComponent(text)}`);
+    
+    // Add the Click Listener for Reset
+    waLink.addEventListener("click", function() {
+       finishOrder();
+    });
   }
+}
+
+// 12. FINISH ORDER (Reset everything)
+function finishOrder() {
+  // Clear cart and ID so the next order is fresh
+  localStorage.removeItem("cart");
+  localStorage.removeItem("orderID");
+  localStorage.removeItem("lastOrderTotal");
+  
+  // Wait 1 second (so WhatsApp opens) then go home
+  setTimeout(() => {
+    window.location.href = "index.html";
+  }, 1000);
 }
 
 document.addEventListener("DOMContentLoaded", updateCartCount);
