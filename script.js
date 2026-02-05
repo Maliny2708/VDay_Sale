@@ -1,5 +1,5 @@
 /* script.js */
-console.log("Script loaded!"); // Debug check
+console.log("Script loaded!"); 
 
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
@@ -13,12 +13,11 @@ function updateCartCount() {
   if (el) el.innerText = cart.length;
 }
 
-// 2. OPEN THE POPUP (The "Smart Modal")
+// 2. OPEN THE POPUP
 function openSmartModal(name, price, cakeLimit, accLimit) {
-  // Save current product details
   currentProduct = { name, price, cakeLimit, accLimit };
   
-  // Reset counts to 0
+  // Reset counts
   counts = { apple: 0, cheese: 0, earring: 0, bracelet: 0, charm: 0 };
   document.getElementById("qtyApple").innerText = "0";
   document.getElementById("qtyCheese").innerText = "0";
@@ -26,16 +25,20 @@ function openSmartModal(name, price, cakeLimit, accLimit) {
   document.getElementById("qtyBracelet").innerText = "0";
   document.getElementById("qtyCharm").innerText = "0";
 
-  // Show/Hide Sections based on what the product allows
-  // If cakeLimit is 0, hide the cake section
+  // Reset Card Section
+  const cardCheck = document.getElementById("cardCheck");
+  const cardText = document.getElementById("cardMessage");
+  if (cardCheck) {
+    cardCheck.checked = false;
+    cardText.value = "";
+    cardText.style.display = "none";
+  }
+
+  // Show/Hide Sections
   document.getElementById("cakeSection").style.display = cakeLimit > 0 ? "block" : "none";
-  // If accLimit is 0, hide the accessory section
   document.getElementById("accSection").style.display = accLimit > 0 ? "block" : "none";
 
-  // Update Title
   document.getElementById("modalTitle").innerText = `Customize: ${name}`;
-  
-  // Show the Modal
   document.getElementById("flavorModal").style.display = "flex";
   
   updateModalUI();
@@ -46,102 +49,92 @@ function closeModal() {
   document.getElementById("flavorModal").style.display = "none";
 }
 
-// 4. CHANGE QUANTITY (+/- Buttons)
+// 4. CHANGE QUANTITY
 function changeQty(type, change) {
-  // Check if we are changing a Cake or an Accessory
   const isCake = (type === 'apple' || type === 'cheese');
   const limit = isCake ? currentProduct.cakeLimit : currentProduct.accLimit;
-  
-  // Calculate how many we have selected so far
   const currentTotal = isCake 
     ? (counts.apple + counts.cheese)
     : (counts.earring + counts.bracelet + counts.charm);
 
-  // Logic: Add if under limit, Subtract if above 0
   if (change > 0 && currentTotal < limit) {
     counts[type]++;
   } else if (change < 0 && counts[type] > 0) {
     counts[type]--;
   }
-
   updateModalUI();
 }
 
-// 5. UPDATE POPUP TEXT (Validation)
+// 5. TOGGLE CARD MESSAGE BOX
+function toggleCard() {
+  const checkbox = document.getElementById("cardCheck");
+  const textarea = document.getElementById("cardMessage");
+  textarea.style.display = checkbox.checked ? "block" : "none";
+}
+
+// 6. UPDATE POPUP UI
 function updateModalUI() {
-  // Update the numbers on screen
   document.getElementById("qtyApple").innerText = counts.apple;
   document.getElementById("qtyCheese").innerText = counts.cheese;
   document.getElementById("qtyEarring").innerText = counts.earring;
   document.getElementById("qtyBracelet").innerText = counts.bracelet;
   document.getElementById("qtyCharm").innerText = counts.charm;
 
-  // Check totals
   const totalCakes = counts.apple + counts.cheese;
   const totalAcc = counts.earring + counts.bracelet + counts.charm;
-  
   const btn = document.getElementById("confirmBtn");
-  let cakesOk = true;
-  let accOk = true;
+  
+  let cakesOk = (currentProduct.cakeLimit === 0) || (totalCakes === currentProduct.cakeLimit);
+  let accOk = (currentProduct.accLimit === 0) || (totalAcc === currentProduct.accLimit);
 
-  // Validate Cakes
-  if (currentProduct.cakeLimit > 0) {
-    if (totalCakes === currentProduct.cakeLimit) {
-      cakesOk = true;
-    } else {
-      cakesOk = false;
-      btn.innerText = `Pick ${currentProduct.cakeLimit - totalCakes} more cakes`;
-    }
-  }
+  if (!cakesOk) btn.innerText = `Pick more cakes`;
+  else if (!accOk) btn.innerText = `Pick more accessories`;
 
-  // Validate Accessories
-  if (currentProduct.accLimit > 0) {
-    if (totalAcc === currentProduct.accLimit) {
-      accOk = true;
-    } else {
-      accOk = false;
-      btn.innerText = `Pick ${currentProduct.accLimit - totalAcc} more accessories`;
-    }
-  }
-
-  // If everything is valid, enable the button
   if (cakesOk && accOk) {
     btn.disabled = false;
-    btn.style.background = "#ff6f91"; // Pink
+    btn.style.background = "#ff6f91";
     btn.innerText = "Add to Cart 💖";
   } else {
     btn.disabled = true;
-    btn.style.background = "#ccc"; // Grey
+    btn.style.background = "#ccc";
   }
 }
 
-// 6. CONFIRM & ADD TO CART
+// 7. CONFIRM SELECTION
 function confirmSelection() {
   let details = [];
   
+  // Collect Flavors
   if (counts.apple > 0) details.push(`${counts.apple} Apple`);
   if (counts.cheese > 0) details.push(`${counts.cheese} Cheese`);
   if (counts.earring > 0) details.push(`${counts.earring} Earring`);
   if (counts.bracelet > 0) details.push(`${counts.bracelet} Bracelet`);
   if (counts.charm > 0) details.push(`${counts.charm} Charm`);
 
-  // Create the cart item
+  // Collect Card Message
+  const cardCheck = document.getElementById("cardCheck");
+  const cardText = document.getElementById("cardMessage");
+  if (cardCheck && cardCheck.checked && cardText.value.trim() !== "") {
+    // Sanitize message to prevent issues
+    let cleanMsg = cardText.value.replace(/(\r\n|\n|\r)/gm, " "); 
+    details.push(`[Card: "${cleanMsg}"]`);
+  }
+
   const item = {
     id: Date.now(),
     bundle: currentProduct.name,
     price: currentProduct.price,
-    details: details.join(", ") || "No Selection"
+    details: details.join(", ") || "Standard"
   };
 
   cart.push(item);
   localStorage.setItem("cart", JSON.stringify(cart));
-  
   closeModal();
   updateCartCount();
   alert("Added to cart! 🛒");
 }
 
-// 7. SIMPLE ADD (For items without options, if needed)
+// 8. ADD ACCESSORY DIRECTLY
 function addAccessory(name, price) {
   cart.push({ id: Date.now(), bundle: name, price: price, details: "Standard" });
   localStorage.setItem("cart", JSON.stringify(cart));
@@ -149,7 +142,7 @@ function addAccessory(name, price) {
   alert("Added to cart!");
 }
 
-// 8. LOAD CART PAGE
+// 9. LOAD CART PAGE
 function loadCart() {
   const container = document.getElementById("cartItems");
   const subtotalEl = document.getElementById("subtotal");
@@ -185,7 +178,7 @@ function removeItem(index) {
   updateCartCount();
 }
 
-// 9. CHECKOUT PAGE
+// 10. CHECKOUT LOGIC
 function prepareCheckout() {
   const mmuCheckbox = document.getElementById("mmuCheck");
   const priceBox = document.getElementById("priceBox");
@@ -207,7 +200,6 @@ function prepareCheckout() {
     document.getElementById("finalPrice").value = finalTotal.toFixed(2);
     document.getElementById("mmuStatus").value = isMMU ? "Yes" : "No";
     
-    // Order ID
     let orderID = localStorage.getItem("orderID");
     if (!orderID) {
       orderID = "MB-" + Math.floor(1000 + Math.random() * 9000);
@@ -221,15 +213,15 @@ function prepareCheckout() {
   calculateTotal();
 }
 
-// 10. THANK YOU PAGE
+// 11. THANK YOU PAGE LOGIC
 function showThankYou() {
   const orderID = localStorage.getItem("orderID");
   const total = localStorage.getItem("lastOrderTotal");
   const waLink = document.getElementById("waLink");
 
   if (document.getElementById("dispOrderID")) {
-    document.getElementById("dispOrderID").innerText = orderID;
-    document.getElementById("dispTotal").innerText = "RM" + total;
+    document.getElementById("dispOrderID").innerText = orderID || "Error";
+    document.getElementById("dispTotal").innerText = "RM" + (total || "0.00");
   }
   if (waLink) {
     const text = `Hi! Order ID: ${orderID}. Total: RM${total}. Sending payment proof!`;
