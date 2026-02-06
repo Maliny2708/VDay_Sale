@@ -289,7 +289,7 @@ function showThankYou() {
   }
 
   if (waLink) {
-    const text = `Attached is the order details for payment and confirmation. Order ID: ${orderID}`;
+    const text = `Attached is the order details for payment and confirmation. Order ID: ${orderID} Total: ${total}`;
     waLink.setAttribute("href", `https://wa.me/60166113563?text=${encodeURIComponent(text)}`);
     
     waLink.addEventListener("click", function() {
@@ -310,3 +310,4 @@ function finishOrder() {
 }
 
 document.addEventListener("DOMContentLoaded", updateCartCount);
+
